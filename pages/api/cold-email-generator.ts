@@ -79,7 +79,7 @@ export default async function handler(
 
     // Call Groq API
     const response = await groq.chat.completions.create({
-      model: "llama-3.3-70b-versatile", // Use a Groq-supported model like Mixtral
+      model: "mixtral-8x7b-32768", // Use a Groq-supported model like Mixtral
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3, // Lower temperature for more deterministic output
       max_tokens: 1000, // Limit the response length
