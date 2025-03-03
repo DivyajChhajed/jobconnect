@@ -78,7 +78,7 @@ export default async function handler(
       model: "mixtral-8x7b-32768", // Use a Groq-supported model like Mixtral
       messages: [{ role: "user", content: prompt }],
       temperature: 0.3,
-      max_tokens: 1000,
+      max_tokens: 1500,
     });
 
     const jsonResponse = response.choices[0]?.message?.content?.trim();

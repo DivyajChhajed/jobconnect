@@ -48,6 +48,7 @@ const ResumeUploadPage = () => {
   const [resumeText, setResumeText] = useState("");
   const [parsedData, setParsedData] = useState<ExtractedData | null>(null);
   const [leads, setLeads] = useState<Leads | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -66,15 +67,17 @@ const ResumeUploadPage = () => {
         const arrayBuffer = await file.arrayBuffer();
         const text = await extractTextFromPDF(arrayBuffer);
         setResumeText(text);
+        setFileName(file.name); // Set the file name
         setError("");
         console.log(
-          " Handle File Change Called, Extracting resume text, sending to handleExtract"
+          "Handle File Change Called, Extracting resume text, sending to handleExtract"
         );
       } catch (error) {
         console.error("Error processing file:", error);
         setError("Failed to process resume. Please try again.");
       }
     } else {
+      setFileName(null); // Clear the file name
       setError("Please upload a PDF or DOC file");
     }
   };
@@ -163,9 +166,9 @@ const ResumeUploadPage = () => {
                       Supports PDF, DOC formats
                     </span>
                   </label>
-                  {resumeText && (
+                  {fileName && ( // Display the file name
                     <div className="mt-2 text-sm text-cyan-400">
-                      Resume Uploaded
+                      Uploaded: {fileName}
                     </div>
                   )}
                 </div>
