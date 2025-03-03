@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.2",
+    "@mendable/firecrawl-js": "^1.19.0",
     "@radix-ui/react-alert-dialog": "^1.1.5",
     "@radix-ui/react-slot": "^1.1.1",
     "@vercel/analytics": "^1.5.0",

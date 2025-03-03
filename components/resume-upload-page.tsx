@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { extractTextFromPDF, askGPTForResumeMatch } from "../utils/resumeUtils";
 import { askGPTForColdEmail } from "../utils/coldEmailUtils";
 import { getCompanyData } from "../utils/getEmailLeads";
-import Link from "next/link";
 
 interface ExtractedData {
   company: string;
@@ -42,7 +41,7 @@ const ResumeUploadPage = () => {
   const [generatedEmail, setGeneratedEmail] = useState<GeneratedEmail | null>(
     null
   );
-  const [jobUrl, setJobUrl] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [resumeText, setResumeText] = useState("");
@@ -133,7 +132,7 @@ const ResumeUploadPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 p-4 md:p-6 font-sans">
-      <div className="max-w-5xl mx-auto grid gap-6">
+      <div className="max-w-4xl mx-auto grid gap-6">
         {/* Top Section: Input Form */}
         <div className="">
           {/* Left Column: Resume Upload and Job Description */}
@@ -174,11 +173,11 @@ const ResumeUploadPage = () => {
                 </div>
               </CardContent>
             </Card>
-            <Card className="bg-gray-800 border-gray-700 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/20">
+            {/* <Card className="bg-gray-800 border-gray-700 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/20">
               <CardHeader className="border-b border-gray-700 pb-1">
                 <CardTitle className="flex items-center gap-2 text-gray-100 text-lg">
                   <Link className="text-cyan-400" href={"/"} />
-                  <Linkedin className="h-5 w-5 text-cyan-400" />
+                  <Linkedin className="h-10 w-5 text-cyan-400" />
                   Job URL
                 </CardTitle>
               </CardHeader>
@@ -190,8 +189,15 @@ const ResumeUploadPage = () => {
                   value={jobUrl}
                   onChange={(e) => setJobUrl(e.target.value)}
                 />
+                <Button
+                  onClick={handleScrapeJobDescription}
+                  className="w-full bg-cyan-600 text-white font-semibold py-4 rounded-md transition-all duration-300 ease-in-out transform hover:bg-cyan-700 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/40 disabled:bg-gray-600 disabled:cursor-not-allowed"
+                  disabled={!jobUrl || isLoading}
+                >
+                  {isLoading ? "Scraping..." : "Extract Job Description"}
+                </Button>
               </CardContent>
-            </Card>
+            </Card> */}
 
             <Card className="bg-gray-800 border-gray-700 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/20">
               <CardHeader className="border-b border-gray-700 pb-2">

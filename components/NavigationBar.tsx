@@ -3,18 +3,20 @@
 import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
 
 import Image from "next/image";
+import Link from "next/link";
 
 export default function NavigationBar() {
   return (
     <nav className="bg-gray-900 border-b border-gray-800 p-4 shadow-lg">
       <div className="container mx-auto flex justify-between items-center max-w-full">
-        <div className="text-left flex items-center gap-2">
-          <Image src="/JobConnect.svg" alt="Logo" width={50} height={50} />
-          <h1 className="text-3xl font-bold text-cyan-400 tracking-tight">
-            JobConnect
-          </h1>
-          {/* <h3 className="text-lg text-gray-400">Easy Cold Email</h3> */}
-        </div>
+        <Link href={"/"}>
+          <div className="text-left flex items-center gap-2">
+            <Image src="/JobConnect.svg" alt="Logo" width={50} height={50} />
+            <h1 className="text-3xl font-bold text-cyan-400 tracking-tight">
+              JobConnect
+            </h1>
+          </div>
+        </Link>
         <div className="flex items-center gap-4">
           <SignedOut>
             <SignInButton mode="modal">
