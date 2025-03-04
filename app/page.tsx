@@ -13,7 +13,7 @@ export default function LandingPage() {
 
   const handleGetStarted = () => {
     if (isSignedIn) {
-      router.push("/jobConnect"); // Redirect to JobConnect if signed in
+      router.push("/jobconnect"); // Redirect to JobConnect if signed in
     } else {
       router.push("/sign-in"); // Redirect to sign-in if not signed in
     }
