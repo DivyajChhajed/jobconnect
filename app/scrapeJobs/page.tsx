@@ -18,12 +18,19 @@ const employmentTypes = [
   "Freelance",
 ];
 
+const jobPortals = [
+  { value: "indeed", label: "Indeed" },
+  { value: "glassdoor", label: "Glassdoor" },
+  { value: "naukri", label: "Naukri.com" },
+];
+
 export default function ScrapeJobsPage() {
-  const router = useRouter();
+  // const router = useRouter();
   const [formData, setFormData] = useState({
     jobTitle: "",
     jobLocation: "",
     employmentType: "",
+    portal: "indeed", // Default to Indeed
   });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +47,8 @@ export default function ScrapeJobsPage() {
     if (
       !formData.jobTitle ||
       !formData.jobLocation ||
-      !formData.employmentType
+      !formData.employmentType ||
+      !formData.portal
     ) {
       setError("Please fill out all fields.");
       return;
@@ -48,11 +56,43 @@ export default function ScrapeJobsPage() {
 
     setIsLoading(true);
     setError("");
+
     try {
-      // Placeholder for scraping logic (e.g., call an API)
-      console.log("Scraping jobs with:", formData);
-      // Example: You could call an API here and redirect to a results page
-      // router.push("/job-results"); // Uncomment and adjust once implemented
+      const response = await fetch("/api/scrape-jobs", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `${errorData.error || "Failed to scrape jobs"}: ${
+            errorData.details || ""
+          }`
+        );
+      }
+
+      // Get the filename from the Content-Disposition header
+      const contentDisposition = response.headers.get("Content-Disposition");
+      let filename = "jobs.csv"; // Fallback
+      if (contentDisposition) {
+        const match = contentDisposition.match(/filename="(.+)"/);
+        if (match && match[1]) filename = match[1];
+      }
+
+      // Handle CSV download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename; // Use dynamic filename from backend
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
     } catch (err: any) {
       setError(err.message || "Failed to scrape jobs. Please try again.");
     } finally {
@@ -62,15 +102,8 @@ export default function ScrapeJobsPage() {
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 font-sans">
-      {/* Navigation Bar */}
       <NavigationBar />
-
-      {/* Main Content */}
       <div className="container mx-auto p-4 md:p-6 max-w-2xl">
-        <h1 className="text-3xl font-bold text-cyan-400 mb-6 text-center">
-          Scrape Jobs
-        </h1>
-
         <Card className="bg-gray-800 border-gray-700 shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-cyan-500/20">
           <CardHeader className="border-b border-gray-700 pb-2">
             <CardTitle className="text-gray-100 text-lg text-center">
@@ -79,7 +112,6 @@ export default function ScrapeJobsPage() {
           </CardHeader>
           <CardContent className="pt-4">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Job Title/Name */}
               <div>
                 <label
                   htmlFor="jobTitle"
@@ -98,7 +130,6 @@ export default function ScrapeJobsPage() {
                 />
               </div>
 
-              {/* Job Location */}
               <div>
                 <label
                   htmlFor="jobLocation"
@@ -117,7 +148,6 @@ export default function ScrapeJobsPage() {
                 />
               </div>
 
-              {/* Employment Type */}
               <div>
                 <label
                   htmlFor="employmentType"
@@ -143,7 +173,28 @@ export default function ScrapeJobsPage() {
                 </select>
               </div>
 
-              {/* Error Message */}
+              <div>
+                <label
+                  htmlFor="portal"
+                  className="text-sm font-semibold text-gray-400 block mb-1"
+                >
+                  Job Portal
+                </label>
+                <select
+                  id="portal"
+                  name="portal"
+                  value={formData.portal}
+                  onChange={handleInputChange}
+                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-200"
+                >
+                  {jobPortals.map((portal) => (
+                    <option key={portal.value} value={portal.value}>
+                      {portal.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {error && (
                 <Alert
                   variant="destructive"
@@ -153,7 +204,6 @@ export default function ScrapeJobsPage() {
                 </Alert>
               )}
 
-              {/* Submit Button */}
               <Button
                 type="submit"
                 className="w-full bg-cyan-600 text-white font-semibold py-2 rounded-md transition-all duration-300 ease-in-out transform hover:bg-cyan-700 hover:scale-105 hover:shadow-xl hover:shadow-cyan-500/40 disabled:bg-gray-600 disabled:cursor-not-allowed"
@@ -182,14 +232,13 @@ export default function ScrapeJobsPage() {
                     Scraping...
                   </span>
                 ) : (
-                  "Scrape Jobs"
+                  "Download Job Listings"
                 )}
               </Button>
             </form>
           </CardContent>
         </Card>
 
-        {/* Navigation Links */}
         <div className="mt-6 text-center">
           <Link href="/" className="text-cyan-400 hover:underline">
             Back to Home
